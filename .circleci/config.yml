@@ -1,51 +1,50 @@
- version: 2.1
+  version: 2.1
+  
+  orbs:
+    win: circleci/windows@2.2.0
 
- orbs:
-  win: circleci/windows@2.2.0
-
- jobs:
-   test:
-     description: "Setup dependencies and run test"
-     executor: win/default     
-     working_directory: ~/src/sapco2/tests/sapco2.test
-     steps:
-       - checkout
-       - run: Get-Location
-       - restore_cache:
-           keys:
-             - dotnet-packages-v1-{{ checksum "sapco2.test.csproj" }}
-       - run:
-           name: "Install Project Dependencies"
-           command: dotnet.exe restore
-       - save_cache:
-           paths:
-             - C:\Users\circleci\.nuget\packages
-           keys:
-             - dotnet-packages-v1-{{ checksum "sapco2.test.csproj" }}
-       - run:
-         name: "Run Application Test"
-         command: dotnet.exe test -v n --result-directory:test_coverage --collect:"Code Coverage" 
-       - run:
-         name: "Print Working Directory"
-         command: pwd 
-       - store_artifacts:         
-         path: C:\Users\circleci\project\test_coverage
+  jobs:
+    test:
+      description: "Setup dependencies and run test"
+      executor: win/default     
+      working_directory: ~/src/sapco2/tests/sapco2.test
+      steps:
+        - checkout
+        - run: Get-Location
+        - restore_cache:
+            keys: 
+              - dotnet-packages-v1-{{ checksum "sapco2.test.csproj" }}
+        - run:
+            name: "Install Project Dependencies"
+            command: dotnet.exe restore
+        - save_cache:
+            paths: 
+              - C:\Users\circleci\.nuget\packages
+            key: dotnet-packages-v1-{{ checksum "sapco2.test.csproj" }}
+        - run:
+            name: "Run Application Test"
+            command: dotnet.exe test -v n --result-directory:test_coverage --collect:"Code Coverage" 
+        - run:
+            name: "Print Working Directory"
+            command: pwd 
+        - store_artifacts:         
+            path: C:\Users\circleci\project\test_coverage
              
-   build:
-     description: "Application setup dependencies and build"
-     executor: win/default     
-     working_directory: ~/src/sapco2/sapco2
-     steps:
-       - checkout
-       - run:
-         name: "Build Application"
-         command: dotnet.exe build 
- workflows:
-   test_and_build:
-     jobs:
-       - test
-       - build:
-           requires:
-             - test
+    build:
+      description: "Application setup dependencies and build"
+      executor: win/default     
+      working_directory: ~/src/sapco2/sapco2
+      steps:
+        - checkout
+        - run:
+            name: "Build Application"
+            command: dotnet.exe build 
+  workflows:
+    test_and_build:
+      jobs:
+        - test
+        - build:
+            requires:
+              - test
            
        
