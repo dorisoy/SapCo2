@@ -13,17 +13,17 @@
         - run: Get-Location
         - restore_cache:
             keys: 
-              - dotnet-packages-v1-{{ checksum "sapco2.test.csproj" }}
+              - dotnet-packages-v1-{{ checksum "./sapco2.test.csproj" }}
         - run:
             name: "Install Project Dependencies"
-            command: dotnet.exe restore
+            command: dotnet.exe restore ./sapco2.test.csproj
         - save_cache:
             paths: 
               - C:\Users\circleci\.nuget\packages
-            key: dotnet-packages-v1-{{ checksum "sapco2.test.csproj" }}
+            key: dotnet-packages-v1-{{ checksum "./sapco2.test.csproj" }}
         - run:
             name: "Run Application Test"
-            command: dotnet.exe test -v n --result-directory:test_coverage --collect:"Code Coverage" 
+            command: dotnet.exe test ./sapco2.test.csproj -v n --result-directory:test_coverage --collect:"Code Coverage" 
         - run:
             name: "Print Working Directory"
             command: pwd 
